@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IIM Lucknow - Sports Facility Booking Sheet</title>
+  <style>
+    :root {
+      --excel-green: #107c41;
+      --excel-green-dark: #0b582e;
+      --excel-green-light: #e6f4ea;
+      --excel-header-bg: #f3f4f6;
+      --excel-border: #d1d5db;
+      --excel-cell-border: #e5e7eb;
+      --excel-selected: #107c41;
+      --text-main: #1f2937;
+      --text-muted: #6b7280;
+      --bg-page: #f9fafb;
+      --bg-card: #ffffff;
+      --slot-avail: #ffffff;
+      --slot-single: #dcfce7;
+      --slot-dual: #fed7aa;
+      --slot-user: #bfdbfe;
+      --slot-blocked: #fee2e2;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Excel Header */
+    header.excel-ribbon-top {
+      background: var(--excel-green);
+      color: #ffffff;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .excel-icon {
+      background: #ffffff;
+      color: var(--excel-green);
+      font-weight: 800;
+      font-size: 14px;
+      padding: 3px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-title h1 {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      opacity: 0.85;
+      margin-left: 6px;
+    }
+
+    .user-pill-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-pill {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-badge {
+      background: #ffffff;
+      color: var(--excel-green-dark);
+      font-weight: bold;
+      border-radius: 12px;
+      padding: 1px 7px;
+      font-size: 11px;
+    }
+
+    .btn-header {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      color: #ffffff;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.15s;
+    }
+
+    .btn-header:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Ribbon / Filter Bar */
+    .filter-ribbon {
+      background: #ffffff;
+      border-bottom: 1px solid var(--excel-border);
+      padding: 10px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ribbon-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .date-nav-box {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--excel-border);
+      border-radius: 6px;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    .date-arrow-btn {
+      background: #f9fafb;
+      border: none;
+      padding: 7px 12px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text-main);
+      transition: background 0.15s;
+    }
+
+    .date-arrow-btn:hover:not(:disabled) {
+      background: #e5e7eb;
+    }
+
+    .date-arrow-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .date-display {
+      padding: 6px 14px;
+      font-weight: 600;
+      font-size: 14px;
+      border-left: 1px solid var(--excel-border);
+      border-right: 1px solid var(--excel-border);
+      min-width: 150px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .sport-select {
+      border: 1px solid var(--excel-border);
+      padding: 7px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-main);
+      background: #ffffff;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .sport-select:focus {
+      border-color: var(--excel-green);
+    }
+
+    .legend-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+    }
+
+    /* Notification Banner */
+    #notification-banner-container {
+      display: none;
+      background: #fffbeb;
+      border-bottom: 1px solid #fef08a;
+      padding: 10px 20px;
+    }
+
+    .banner-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .banner-text {
+      font-size: 13px;
+      color: #92400e;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .banner-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-banner-accept {
+      background: #107c41;
+      color: white;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-banner-reject {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Spreadsheet Grid Container */
+    .sheet-wrapper {
+      flex: 1;
+      overflow: auto;
+      background: #ffffff;
+      position: relative;
+    }
+
+    table.excel-sheet {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 1600px;
+      font-size: 13px;
+    }
+
+    /* Table Headers */
+    thead th {
+      position: sticky;
+      top: 0;
+      background: #f3f4f6;
+      color: #374151;
+      border: 1px solid var(--excel-border);
+      padding: 8px 10px;
+      font-weight: 600;
+      font-size: 12px;
+      text-align: center;
+      z-index: 20;
+      user-select: none;
+    }
+
+    thead th.facility-header {
+      left: 0;
+      z-index: 30;
+      background: #e5e7eb;
+      min-width: 200px;
+      text-align: left;
+      padding-left: 16px;
+    }
+
+    /* Sticky Facility Column */
+    tbody th.facility-cell {
+      position: sticky;
+      left: 0;
+      background: #f9fafb;
+      border: 1px solid var(--excel-border);
+      padding: 10px 16px;
+      font-weight: 600;
+      color: var(--text-main);
+      z-index: 10;
+      text-align: left;
+      white-space: nowrap;
+      box-shadow: 2px 0 3px rgba(0, 0, 0, 0.03);
+    }
+
+    .facility-sport-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: normal;
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* Sheet Cells */
+    td.sheet-cell {
+      border: 1px solid var(--excel-cell-border);
+      height: 48px;
+      min-width: 82px;
+      max-width: 96px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: background-color 0.1s, transform 0.05s;
+      user-select: none;
+    }
+
+    td.sheet-cell:hover {
+      outline: 2px solid var(--excel-selected);
+      z-index: 5;
+    }
+
+    /* Cell States */
+    .cell-avail {
+      background: var(--slot-avail);
+      color: #9ca3af;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .cell-avail:hover {
+      background: #f0fdf4;
+      color: var(--excel-green);
+    }
+
+    .cell-single {
+      background: var(--slot-single);
+      color: #166534;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .cell-dual {
+      background: var(--slot-dual);
+      color: #9a3412;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .cell-mine {
+      background: var(--slot-user) !important;
+      color: #1e40af !important;
+      font-weight: 800;
+      border: 1.5px solid #3b82f6;
+    }
+
+    .cell-blocked {
+      background: #fee2e2;
+      color: #991b1b;
+      cursor: not-allowed !important;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .cell-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* Modal Backdrop */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+      backdrop-filter: blur(2px);
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      animation: modalFadeIn 0.15s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-header {
+      background: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .modal-body {
+      padding: 18px 20px;
+      max-height: 75vh;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      background: #f9fafb;
+      border-top: 1px solid #e5e7eb;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .info-summary-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: #166534;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 5px;
+    }
+
+    .form-control {
+      width: 100%;
+      border: 1px solid var(--excel-border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .form-control:focus {
+      border-color: var(--excel-green);
+      box-shadow: 0 0 0 2px rgba(16, 124, 65, 0.15);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .duration-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .duration-btn {
+      border: 1.5px solid var(--excel-border);
+      background: #ffffff;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .duration-btn.active {
+      border-color: var(--excel-green);
+      background: var(--excel-green-light);
+      color: var(--excel-green-dark);
+    }
+
+    .duration-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      border-color: #e5e7eb;
+    }
+
+    .alert-banner {
+      padding: 9px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+
+    .alert-amber {
+      background: #fffbeb;
+      border: 1px solid #fef08a;
+      color: #92400e;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--excel-green);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: var(--excel-green-dark);
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: #d1d5db;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    /* Login Screen View */
+    .login-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f3f4f6;
+      padding: 20px;
+    }
+
+    .login-box {
+      background: #ffffff;
+      border: 1px solid var(--excel-border);
+      border-radius: 12px;
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .login-logo {
+      background: var(--excel-green);
+      color: #ffffff;
+      width: 52px;
+      height: 52px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .login-box h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+    }
+
+    .login-box p.subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .google-btn {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 11px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .google-btn:hover {
+      background: #f9fafb;
+      border-color: #9ca3af;
+    }
+
+    .account-picker-list {
+      margin-top: 20px;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 16px;
+      text-align: left;
+    }
+
+    .picker-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .account-item {
+      padding: 8px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      transition: background 0.1s;
+    }
+
+    .account-item:hover {
+      background: #f3f4f6;
+    }
+
+    .account-item span.email {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Footer */
+    footer.excel-footer {
+      background: #ffffff;
+      border-top: 1px solid var(--excel-border);
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================== -->
+  <!-- 1. LOGIN SCREEN (GOOGLE SSO)              -->
+  <!-- ========================================== -->
+  <div id="login-screen" class="login-container">
+    <div class="login-box">
+      <div class="login-logo">X</div>
+      <h2>SPORTS BOOKINGS</h2>
+      <p class="subtitle">IIM Lucknow Sports Complex Availability Sheet</p>
+
+      <button id="btn-google-sso" class="google-btn" onclick="showGoogleLoginModal()">
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.14z"/>
+          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+          <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.97 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <div style="font-size: 11px; color: #6b7280; margin-top: 14px;">
+        Strictly restricted to <strong>@iiml.ac.in</strong> student accounts
+      </div>
+
+      <!-- Quick sample account picker for testing -->
+      <div class="account-picker-list">
+        <div class="picker-label">Quick Sign-in (Select simulated IIML account):</div>
+        <div class="account-item" onclick="loginAs('Arjun Bansal', 'arjun.bansal@iiml.ac.in', 'G', '+91 98765 43210')">
+          <div><strong>Arjun Bansal</strong> <span class="email">(arjun.bansal@iiml.ac.in)</span></div>
+          <span class="section-badge" style="background:#107c41;color:#fff;">Sec G</span>
+        </div>
+        <div class="account-item" onclick="loginAs('Rohit Sharma', 'rohit.sharma@iiml.ac.in', 'H', '+91 98765 43211')">
+          <div><strong>Rohit Sharma</strong> <span class="email">(rohit.sharma@iiml.ac.in)</span></div>
+          <span class="section-badge" style="background:#107c41;color:#fff;">Sec H</span>
+        </div>
+        <div class="account-item" onclick="loginAs('Priya Singh', 'priya.singh@iiml.ac.in', 'A', '+91 98765 43212')">
+          <div><strong>Priya Singh</strong> <span class="email">(priya.singh@iiml.ac.in)</span></div>
+          <span class="section-badge" style="background:#107c41;color:#fff;">Sec A</span>
+        </div>
+        <div class="account-item" onclick="loginAs('Vikram Patel', 'vikram.patel@iiml.ac.in', 'C', '+91 98765 43214')">
+          <div><strong>Vikram Patel</strong> <span class="email">(vikram.patel@iiml.ac.in)</span></div>
+          <span class="section-badge" style="background:#107c41;color:#fff;">Sec C</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- 2. MAIN APPLICATION (BOOKING SHEET)       -->
+  <!-- ========================================== -->
+  <div id="main-app" style="display: none; flex-direction: column; flex: 1;">
+    
+    <!-- Top Green Ribbon -->
+    <header class="excel-ribbon-top">
+      <div class="brand-title">
+        <div class="excel-icon">IIML</div>
+        <div>
+          <h1>SPORTS FACILITY BOOKING SHEET</h1>
+          <span class="brand-subtitle">Indian Institute of Management Lucknow</span>
+        </div>
+      </div>
+
+      <div class="user-pill-container">
+        <div class="user-pill">
+          <span id="header-user-name">Student</span>
+          <span class="section-badge" id="header-user-section">Sec G</span>
+        </div>
+        <button class="btn-header" onclick="logout()">Sign Out</button>
+      </div>
+    </header>
+
+    <!-- Notification Banner for Swaps & Share Requests -->
+    <div id="notification-banner-container">
+      <div class="banner-content">
+        <div class="banner-text">
+          <span style="font-weight: bold; font-size: 15px;">🔔 Action Required:</span>
+          <span id="banner-message-text">Section H has requested to swap their slot with yours.</span>
+        </div>
+        <div class="banner-actions">
+          <button class="btn-banner-accept" id="btn-banner-accept" onclick="respondToPendingRequest(true)">Accept</button>
+          <button class="btn-banner-reject" id="btn-banner-reject" onclick="respondToPendingRequest(false)">Reject</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter / Ribbon Toolbar -->
+    <div class="filter-ribbon">
+      <!-- Date Navigation -->
+      <div class="filter-group">
+        <span class="ribbon-label">Date</span>
+        <div class="date-nav-box">
+          <button class="date-arrow-btn" id="btn-prev-day" onclick="changeDay(-1)">←</button>
+          <div class="date-display" id="date-display" onclick="document.getElementById('hidden-date-picker').showPicker()">
+            4 October 2026
+          </div>
+          <input type="date" id="hidden-date-picker" style="display:none;" onchange="onDatePickerChange(this.value)">
+          <button class="date-arrow-btn" id="btn-next-day" onclick="changeDay(1)">→</button>
+        </div>
+      </div>
+
+      <!-- Sport Filter -->
+      <div class="filter-group">
+        <span class="ribbon-label">Sport</span>
+        <select class="sport-select" id="sport-filter" onchange="renderSheet()">
+          <option value="ALL">All Sports (10 Facilities)</option>
+          <option value="Badminton">Badminton Court</option>
+          <option value="Basketball">Basketball Court</option>
+          <option value="Cricket">Cricket Ground</option>
+          <option value="Football">Football Ground</option>
+          <option value="Futsal">Futsal Turf</option>
+          <option value="Kabaddi">Kabaddi Ground</option>
+          <option value="Kho Kho">Kho Kho Ground</option>
+          <option value="Volleyball">Volleyball Court</option>
+          <option value="Throwball">Throwball Court</option>
+          <option value="Tennis">Tennis Court</option>
+        </select>
+      </div>
+
+    </div>
+
+    <!-- Excel Spreadsheet View -->
+    <div class="sheet-wrapper">
+      <table class="excel-sheet" id="booking-sheet-table">
+        <thead id="sheet-thead">
+          <!-- Dynamically populated headers -->
+        </thead>
+        <tbody id="sheet-tbody">
+          <!-- Dynamically populated facility rows -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Excel Bottom Footer -->
+    <footer class="excel-footer">
+      <div>
+        <span>Max Capacity: <strong>2 Different Sections</strong> per slot | Max Duration: <strong>60 mins</strong></span>
+      </div>
+      <div style="display: flex; gap: 14px;">
+        <span style="cursor: pointer; text-decoration: underline;" onclick="resetToSampleData()">Reset Sample Data</span>
+        <span>Sports Complex Counter: +91 522 669 6000</span>
+      </div>
+    </footer>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- MODALS                                     -->
+  <!-- ========================================== -->
+
+  <!-- Modal A: Click Available Slot -> Book -->
+  <div id="modal-book" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="book-modal-title">Book Facility Slot</h3>
+        <button class="modal-close-btn" onclick="closeModal('modal-book')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="info-summary-box">
+          <div>
+            <strong id="book-facility-name">Badminton Court</strong><br>
+            <span id="book-time-slot">09:00 – 09:30 AM</span>
+          </div>
+          <div style="text-align: right;">
+            <span id="book-date-text">2026-10-04</span><br>
+            <span style="font-weight: 600; color: #15803d;">Available</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Section</label>
+            <select id="book-section" class="form-control">
+              <option value="A">Section A</option>
+              <option value="B">Section B</option>
+              <option value="C">Section C</option>
+              <option value="D">Section D</option>
+              <option value="E">Section E</option>
+              <option value="F">Section F</option>
+              <option value="G">Section G</option>
+              <option value="H">Section H</option>
+              <option value="I">Section I</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Duration</label>
+            <div class="duration-selector">
+              <button type="button" id="btn-dur-30" class="duration-btn active" onclick="setBookingDuration(30)">30 Min</button>
+              <button type="button" id="btn-dur-60" class="duration-btn" onclick="setBookingDuration(60)">60 Min</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 60-min slot sharing warning/notice -->
+        <div id="share-request-notice" class="alert-banner alert-amber" style="display: none;">
+          <strong>Shared Slot Notice:</strong> The second 30-min slot (<span id="second-slot-time"></span>) is already booked by Section <span id="second-slot-section"></span>. Your first slot will be confirmed immediately, and a <strong>Share Request</strong> will be automatically sent to Section <span id="second-slot-section-2"></span> for the second slot.
+        </div>
+
+        <div style="font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; margin: 14px 0 8px;">Point of Contact 1 (Lead Student)</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="book-poc1-name" class="form-control" placeholder="Arjun Bansal">
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" id="book-poc1-phone" class="form-control" placeholder="+91 98765 43210">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>IIML Email (Auto-filled from SSO)</label>
+          <input type="email" id="book-poc1-email" class="form-control" readonly style="background: #f3f4f6;">
+        </div>
+
+        <div style="font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; margin: 14px 0 8px;">Point of Contact 2 (Secondary)</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>POC 2 Name</label>
+            <input type="text" id="book-poc2-name" class="form-control" placeholder="Rohit Verma">
+          </div>
+          <div class="form-group">
+            <label>POC 2 Phone</label>
+            <input type="tel" id="book-poc2-phone" class="form-control" placeholder="+91 98765 43219">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>POC 2 Email</label>
+          <input type="email" id="book-poc2-email" class="form-control" placeholder="rohit.v@iiml.ac.in">
+        </div>
+
+        <div class="form-group" style="margin-top: 10px;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;">
+            <input type="checkbox" id="book-equipment-toggle">
+            <span>Issue equipment from Sports Counter (racquets/balls)</span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modal-book')">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmBooking()">Confirm Booking</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal B: Click Booked Slot -> Inspect Details / Swap / Share -->
+  <div id="modal-details" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Slot Booking Details</h3>
+        <button class="modal-close-btn" onclick="closeModal('modal-details')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="info-summary-box" style="background:#eff6ff; border-color:#bfdbfe; color:#1e40af;">
+          <div>
+            <strong id="details-facility-name">Badminton Court</strong><br>
+            <span id="details-time-slot">09:00 – 09:30 AM</span>
+          </div>
+          <div style="text-align: right;">
+            <span id="details-date-text">2026-10-04</span><br>
+            <span id="details-capacity-tag" style="font-weight: 600;">1 of 2 Sections</span>
+          </div>
+        </div>
+
+        <!-- Section Tabs if 2 sections booked -->
+        <div id="details-section-tabs" style="display: flex; gap: 8px; margin-bottom: 14px;">
+          <!-- Dynamically populated tab buttons -->
+        </div>
+
+        <div id="details-poc-content">
+          <!-- Dynamically populated POC info -->
+        </div>
+
+        <!-- Action alerts -->
+        <div id="details-actions-container" style="margin-top: 16px; border-top: 1px solid #e5e7eb; padding-top: 14px; display: flex; flex-direction: column; gap: 8px;">
+          <!-- Buttons dynamically injected based on permissions: Request to Share, Swap, or Cancel -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modal-details')">Close</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal C: Swap Request Proposer -->
+  <div id="modal-swap" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Propose Slot Swap</h3>
+        <button class="modal-close-btn" onclick="closeModal('modal-swap')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+          You are proposing a slot exchange with <strong>Section <span id="swap-target-section"></span></strong> for:
+        </p>
+        <div style="background: #f9fafb; border: 1px solid #e5e7eb; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 16px;">
+          🎯 <strong>Target Slot:</strong> <span id="swap-target-summary"></span>
+        </div>
+
+        <div class="form-group">
+          <label>Select your booking to offer in return:</label>
+          <select id="swap-my-booking-select" class="form-control">
+            <!-- Dynamically populated with logged in user's existing bookings -->
+          </select>
+        </div>
+
+        <div class="alert-banner alert-amber">
+          🔒 <strong>Atomic Swap:</strong> If accepted, both bookings exchange ownership simultaneously. No slot becomes open to third parties.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modal-swap')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitSwapRequest()">Send Swap Request</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal D: Booking Confirmed Success Card -->
+  <div id="modal-success" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header" style="background:#f0fdf4; border-color:#bbf7d0;">
+        <h3 style="color: #166534;">✓ Booking Confirmed</h3>
+        <button class="modal-close-btn" onclick="closeModal('modal-success')">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align: center; padding: 24px 20px;">
+        <div style="background: #107c41; color: white; width: 44px; height: 44px; border-radius: 50%; font-size: 22px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">✓</div>
+        <h4 style="font-size: 17px; margin-bottom: 4px;">Slot Reserved Successfully</h4>
+        <div style="font-family: monospace; font-weight: bold; color: #107c41; margin-bottom: 16px;" id="success-code">IIML-SP-8419</div>
+
+        <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; font-size: 13px; text-align: left; line-height: 1.6; margin-bottom: 16px;">
+          <div>🏢 <strong>Facility:</strong> <span id="success-fac"></span></div>
+          <div>📅 <strong>Date:</strong> <span id="success-date"></span></div>
+          <div>⏰ <strong>Time:</strong> <span id="success-time"></span> (<span id="success-dur"></span>)</div>
+          <div>🏷️ <strong>Section:</strong> <span id="success-sec"></span></div>
+        </div>
+
+        <p style="font-size: 12px; color: #6b7280;">
+          A confirmation receipt has been sent to <strong id="success-email"></strong>
+        </p>
+      </div>
+      <div class="modal-footer" style="justify-content: center;">
+        <button class="btn btn-primary" onclick="closeModal('modal-success')">Back to Sheet</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT LOGIC                           -->
+  <!-- ========================================== -->
+  <script>
+    // ------------------------------------------
+    // 1. DATA MODELS & INITIAL STATE
+    // ------------------------------------------
+    const FACILITIES = [
+      { id: "fac-1", name: "Badminton Court", sport: "Badminton" },
+      { id: "fac-2", name: "Basketball Court", sport: "Basketball" },
+      { id: "fac-3", name: "Cricket Ground", sport: "Cricket" },
+      { id: "fac-4", name: "Football Ground", sport: "Football" },
+      { id: "fac-5", name: "Futsal Turf", sport: "Futsal" },
+      { id: "fac-6", name: "Kabaddi Ground", sport: "Kabaddi" },
+      { id: "fac-7", name: "Kho Kho Ground", sport: "Kho Kho" },
+      { id: "fac-8", name: "Volleyball Court", sport: "Volleyball" },
+      { id: "fac-9", name: "Throwball Court", sport: "Throwball" },
+      { id: "fac-10", name: "Tennis Court", sport: "Tennis" }
+    ];
+
+    // Generate 30-minute intervals from 06:00 to 22:00
+    const TIME_SLOTS = [];
+    for (let hour = 6; hour < 22; hour++) {
+      const hStr = hour.toString().padStart(2, '0');
+      TIME_SLOTS.push(`${hStr}:00`);
+      TIME_SLOTS.push(`${hStr}:30`);
+    }
+
+    // Default Today Date YYYY-MM-DD
+    const TODAY_STR = new Date().toISOString().split('T')[0];
+    let currentDate = TODAY_STR;
+
+    // Logged in user session
+    let currentUser = null;
+
+    // Active booking modal state
+    let activeBookingTarget = null;
+    let selectedDuration = 30;
+
+    // Active inspection modal state
+    let activeInspectCell = null;
+    let activeInspectTab = 0;
+
+    // Active swap target
+    let activeSwapTarget = null;
+
+    // ------------------------------------------
+    // 2. STORAGE MANAGEMENT
+    // ------------------------------------------
+    const STORAGE_KEY = "IIML_SPORTS_BOOKINGS_V1";
+    const REQUESTS_KEY = "IIML_SPORTS_REQUESTS_V1";
+
+    function getStoredBookings() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      if (data) return JSON.parse(data);
+      return generateInitialSampleData();
+    }
+
+    function saveBookings(bookings) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
+    }
+
+    function getStoredRequests() {
+      const data = localStorage.getItem(REQUESTS_KEY);
+      if (data) return JSON.parse(data);
+      return [];
+    }
+
+    function saveRequests(reqs) {
+      localStorage.setItem(REQUESTS_KEY, JSON.stringify(reqs));
+    }
+
+    // Generate initial sample data representing the Excel sheet in specification
+    function generateInitialSampleData() {
+      const sample = [
+        // Badminton 8:30 (G), 9:30 (F), 10:00 (F)
+        { id: "b1", facilityId: "fac-1", date: TODAY_STR, time: "08:30", section: "G", userEmail: "arjun.bansal@iiml.ac.in", userName: "Arjun Bansal", poc1Phone: "+91 98765 43210", poc2Name: "Kunal Mehra", poc2Phone: "+91 98765 43211", poc2Email: "kunal.m@iiml.ac.in", code: "IIML-SP-1001" },
+        { id: "b2", facilityId: "fac-1", date: TODAY_STR, time: "09:30", section: "F", userEmail: "farhan.akhtar@iiml.ac.in", userName: "Farhan Akhtar", poc1Phone: "+91 98765 43215", poc2Name: "Sameer Joshi", poc2Phone: "+91 98765 43216", poc2Email: "sameer.j@iiml.ac.in", code: "IIML-SP-1002" },
+        { id: "b3", facilityId: "fac-1", date: TODAY_STR, time: "10:00", section: "F", userEmail: "farhan.akhtar@iiml.ac.in", userName: "Farhan Akhtar", poc1Phone: "+91 98765 43215", poc2Name: "Sameer Joshi", poc2Phone: "+91 98765 43216", poc2Email: "sameer.j@iiml.ac.in", code: "IIML-SP-1003" },
+
+        // Basketball 8:00 (A), 8:30 (A), 10:00 (H)
+        { id: "b4", facilityId: "fac-2", date: TODAY_STR, time: "08:00", section: "A", userEmail: "priya.singh@iiml.ac.in", userName: "Priya Singh", poc1Phone: "+91 98765 43212", poc2Name: "Aditi Rao", poc2Phone: "+91 98765 43213", poc2Email: "aditi.r@iiml.ac.in", code: "IIML-SP-1004" },
+        { id: "b5", facilityId: "fac-2", date: TODAY_STR, time: "08:30", section: "A", userEmail: "priya.singh@iiml.ac.in", userName: "Priya Singh", poc1Phone: "+91 98765 43212", poc2Name: "Aditi Rao", poc2Phone: "+91 98765 43213", poc2Email: "aditi.r@iiml.ac.in", code: "IIML-SP-1005" },
+        { id: "b6", facilityId: "fac-2", date: TODAY_STR, time: "10:00", section: "H", userEmail: "rohit.sharma@iiml.ac.in", userName: "Rohit Sharma", poc1Phone: "+91 98765 43211", poc2Name: "Deepak Chahar", poc2Phone: "+91 98765 43220", poc2Email: "deepak.c@iiml.ac.in", code: "IIML-SP-1006" },
+
+        // Cricket 8:30 (C), 9:00 (C)
+        { id: "b7", facilityId: "fac-3", date: TODAY_STR, time: "08:30", section: "C", userEmail: "vikram.patel@iiml.ac.in", userName: "Vikram Patel", poc1Phone: "+91 98765 43214", poc2Name: "Siddharth Jain", poc2Phone: "+91 98765 43221", poc2Email: "siddharth.j@iiml.ac.in", code: "IIML-SP-1007" },
+        { id: "b8", facilityId: "fac-3", date: TODAY_STR, time: "09:00", section: "C", userEmail: "vikram.patel@iiml.ac.in", userName: "Vikram Patel", poc1Phone: "+91 98765 43214", poc2Name: "Siddharth Jain", poc2Phone: "+91 98765 43221", poc2Email: "siddharth.j@iiml.ac.in", code: "IIML-SP-1008" },
+
+        // Football 8:00 (F), 9:00 (G + H)
+        { id: "b9", facilityId: "fac-4", date: TODAY_STR, time: "08:00", section: "F", userEmail: "farhan.akhtar@iiml.ac.in", userName: "Farhan Akhtar", poc1Phone: "+91 98765 43215", poc2Name: "Sameer Joshi", poc2Phone: "+91 98765 43216", poc2Email: "sameer.j@iiml.ac.in", code: "IIML-SP-1009" },
+        { id: "b10", facilityId: "fac-4", date: TODAY_STR, time: "09:00", section: "G", userEmail: "arjun.bansal@iiml.ac.in", userName: "Arjun Bansal", poc1Phone: "+91 98765 43210", poc2Name: "Kunal Mehra", poc2Phone: "+91 98765 43211", poc2Email: "kunal.m@iiml.ac.in", code: "IIML-SP-1010" },
+        { id: "b11", facilityId: "fac-4", date: TODAY_STR, time: "09:00", section: "H", userEmail: "rohit.sharma@iiml.ac.in", userName: "Rohit Sharma", poc1Phone: "+91 98765 43211", poc2Name: "Deepak Chahar", poc2Phone: "+91 98765 43220", poc2Email: "deepak.c@iiml.ac.in", code: "IIML-SP-1011" },
+
+        // Tennis 09:00 Blocked for Maintenance
+        { id: "blk-1", facilityId: "fac-10", date: TODAY_STR, time: "09:00", isBlocked: true, reason: "Maintenance" }
+      ];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sample));
+      return sample;
+    }
+
+    function resetToSampleData() {
+      if (confirm("Reset sheet back to default IIM Lucknow sample bookings?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(REQUESTS_KEY);
+        generateInitialSampleData();
+        renderSheet();
+        checkPendingNotifications();
+      }
+    }
+
+    // ------------------------------------------
+    // 3. AUTHENTICATION (GOOGLE SSO & IIML DOMAIN)
+    // ------------------------------------------
+    function loginAs(name, email, section, phone) {
+      if (!email.toLowerCase().endsWith("@iiml.ac.in")) {
+        alert("Access Denied: Only @iiml.ac.in Google accounts are permitted.");
+        return;
+      }
+
+      currentUser = { name, email, section, phone };
+      localStorage.setItem("IIML_SPORTS_USER", JSON.stringify(currentUser));
+
+      document.getElementById("login-screen").style.display = "none";
+      document.getElementById("main-app").style.display = "flex";
+
+      document.getElementById("header-user-name").textContent = currentUser.name;
+      document.getElementById("header-user-section").textContent = `Sec ${currentUser.section}`;
+
+      renderSheet();
+      checkPendingNotifications();
+    }
+
+    function showGoogleLoginModal() {
+      const email = prompt("Enter your IIM Lucknow Google email (e.g. yourname@iiml.ac.in):", "arjun.bansal@iiml.ac.in");
+      if (!email) return;
+
+      if (!email.toLowerCase().endsWith("@iiml.ac.in")) {
+        alert("Access Denied: Only @iiml.ac.in Google accounts are permitted.");
+        return;
+      }
+
+      const sec = prompt("Enter your Section (A to I):", "G") || "G";
+      const name = email.split('@')[0].replace('.', ' ').toUpperCase();
+      loginAs(name, email, sec.toUpperCase(), "+91 98765 43210");
+    }
+
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem("IIML_SPORTS_USER");
+      document.getElementById("main-app").style.display = "none";
+      document.getElementById("login-screen").style.display = "flex";
+    }
+
+    function checkExistingSession() {
+      const saved = localStorage.getItem("IIML_SPORTS_USER");
+      if (saved) {
+        try {
+          const user = JSON.parse(saved);
+          loginAs(user.name, user.email, user.section, user.phone);
+          return;
+        } catch(e) {}
+      }
+      document.getElementById("login-screen").style.display = "flex";
+      document.getElementById("main-app").style.display = "none";
+    }
+
+    // ------------------------------------------
+    // 4. DATE NAVIGATION (TODAY & FUTURE ONLY)
+    // ------------------------------------------
+    function formatDateDisplay(dateStr) {
+      const [y, m, d] = dateStr.split('-');
+      const dateObj = new Date(y, m - 1, d);
+      return dateObj.toLocaleDateString("en-US", { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    function updateDateUI() {
+      document.getElementById("date-display").textContent = formatDateDisplay(currentDate);
+      document.getElementById("hidden-date-picker").value = currentDate;
+      document.getElementById("hidden-date-picker").min = TODAY_STR;
+
+      // Disable Prev Day button if we are at today
+      document.getElementById("btn-prev-day").disabled = (currentDate <= TODAY_STR);
+    }
+
+    function changeDay(delta) {
+      const [y, m, d] = currentDate.split('-');
+      const dateObj = new Date(y, m - 1, d);
+      dateObj.setDate(dateObj.getDate() + delta);
+
+      const newDateStr = dateObj.toISOString().split('T')[0];
+      if (newDateStr < TODAY_STR) return; // Prevent past dates
+
+      currentDate = newDateStr;
+      updateDateUI();
+      renderSheet();
+    }
+
+    function onDatePickerChange(val) {
+      if (!val) return;
+      if (val < TODAY_STR) {
+        alert("Historical booking availability cannot be viewed or modified.");
+        updateDateUI();
+        return;
+      }
+      currentDate = val;
+      updateDateUI();
+      renderSheet();
+    }
+
+    // ------------------------------------------
+    // 5. SHEET RENDERING ENGINE
+    // ------------------------------------------
+    function renderSheet() {
+      const thead = document.getElementById("sheet-thead");
+      const tbody = document.getElementById("sheet-tbody");
+      const sportFilter = document.getElementById("sport-filter").value;
+
+      // 1. Render Table Header Row
+      let headerHtml = `<tr><th class="facility-header">FACILITY \\ TIME</th>`;
+      TIME_SLOTS.forEach(slot => {
+        headerHtml += `<th>${slot}</th>`;
+      });
+      headerHtml += `</tr>`;
+      thead.innerHTML = headerHtml;
+
+      // 2. Fetch all bookings from storage
+      const allBookings = getStoredBookings();
+      const currentDayBookings = allBookings.filter(b => b.date === currentDate);
+
+      // Filter facilities by sport dropdown
+      const facilitiesToRender = sportFilter === "ALL" 
+        ? FACILITIES 
+        : FACILITIES.filter(f => f.sport.toLowerCase() === sportFilter.toLowerCase());
+
+      // 3. Render Table Rows for each Facility
+      let rowsHtml = "";
+      facilitiesToRender.forEach(fac => {
+        rowsHtml += `<tr>`;
+        rowsHtml += `<th class="facility-cell">
+                      ${fac.name}
+                      <span class="facility-sport-sub">${fac.sport}</span>
+                     </th>`;
+
+        TIME_SLOTS.forEach(time => {
+          // Find slots booked or blocked for this facility & time
+          const slotsForCell = currentDayBookings.filter(b => b.facilityId === fac.id && b.time === time);
+
+          if (slotsForCell.length === 0) {
+            // AVAILABLE CELL
+            rowsHtml += `<td class="sheet-cell cell-avail" onclick="openBookingModal('${fac.id}', '${fac.name}', '${time}')">—</td>`;
+          } else if (slotsForCell[0].isBlocked) {
+            // BLOCKED CELL (Maintenance, Event, etc.)
+            rowsHtml += `<td class="sheet-cell cell-blocked" title="Blocked: ${slotsForCell[0].reason}">
+                          ${slotsForCell[0].reason || 'BLOCKED'}
+                         </td>`;
+          } else if (slotsForCell.length === 1) {
+            // 1 SECTION BOOKED
+            const b = slotsForCell[0];
+            const isMine = currentUser && (b.section === currentUser.section);
+            const cellClass = isMine ? "cell-mine" : "cell-single";
+
+            rowsHtml += `<td class="sheet-cell ${cellClass}" onclick="openDetailsModal('${fac.id}', '${time}')">
+                          <span class="cell-badge">${b.section}</span>
+                         </td>`;
+          } else {
+            // 2 SECTIONS BOOKED (FULL CAPACITY)
+            const sec1 = slotsForCell[0].section;
+            const sec2 = slotsForCell[1].section;
+            const isMine = currentUser && (sec1 === currentUser.section || sec2 === currentUser.section);
+            const cellClass = isMine ? "cell-mine" : "cell-dual";
+
+            rowsHtml += `<td class="sheet-cell ${cellClass}" onclick="openDetailsModal('${fac.id}', '${time}')">
+                          ${sec1} + ${sec2}
+                         </td>`;
+          }
+        });
+
+        rowsHtml += `</tr>`;
+      });
+
+      tbody.innerHTML = rowsHtml;
+    }
+
+    // Helper: calculate next 30-min slot string
+    function getNextTimeSlot(timeStr) {
+      const idx = TIME_SLOTS.indexOf(timeStr);
+      if (idx !== -1 && idx < TIME_SLOTS.length - 1) {
+        return TIME_SLOTS[idx + 1];
+      }
+      return null;
+    }
+
+    // ------------------------------------------
+    // 6. MODAL A: BOOK AVAILABLE SLOT
+    // ------------------------------------------
+    function openBookingModal(facId, facName, time) {
+      if (!currentUser) return;
+
+      activeBookingTarget = { facId, facName, time, date: currentDate };
+      selectedDuration = 30;
+
+      document.getElementById("book-facility-name").textContent = facName;
+      document.getElementById("book-time-slot").textContent = `${time} – ${getNextTimeSlot(time) || 'End'}`;
+      document.getElementById("book-date-text").textContent = currentDate;
+      document.getElementById("book-section").value = currentUser.section || "G";
+
+      // Auto-populate POC 1 from current logged in user
+      document.getElementById("book-poc1-name").value = currentUser.name || "";
+      document.getElementById("book-poc1-email").value = currentUser.email || "";
+      document.getElementById("book-poc1-phone").value = currentUser.phone || "+91 98765 43210";
+
+      // POC 2 defaults
+      document.getElementById("book-poc2-name").value = "";
+      document.getElementById("book-poc2-phone").value = "";
+      document.getElementById("book-poc2-email").value = "";
+      document.getElementById("book-equipment-toggle").checked = false;
+
+      // Evaluate 60 min option
+      evaluateDurationOptions();
+
+      document.getElementById("modal-book").style.display = "flex";
+    }
+
+    function evaluateDurationOptions() {
+      const nextTime = getNextTimeSlot(activeBookingTarget.time);
+      const btn60 = document.getElementById("btn-dur-60");
+      const shareNotice = document.getElementById("share-request-notice");
+
+      setBookingDuration(30);
+
+      if (!nextTime) {
+        btn60.disabled = true;
+        shareNotice.style.display = "none";
+        return;
+      }
+
+      const allBookings = getStoredBookings();
+      const nextSlotBookings = allBookings.filter(b => b.facilityId === activeBookingTarget.facId && b.date === currentDate && b.time === nextTime);
+
+      if (nextSlotBookings.length >= 2 || (nextSlotBookings[0] && nextSlotBookings[0].isBlocked)) {
+        // Second slot is full or blocked -> cannot book 60 mins
+        btn60.disabled = true;
+        shareNotice.style.display = "none";
+      } else {
+        btn60.disabled = false;
+        shareNotice.style.display = "none";
+      }
+    }
+
+    function setBookingDuration(mins) {
+      selectedDuration = mins;
+      const btn30 = document.getElementById("btn-dur-30");
+      const btn60 = document.getElementById("btn-dur-60");
+      const shareNotice = document.getElementById("share-request-notice");
+
+      if (mins === 30) {
+        btn30.classList.add("active");
+        btn60.classList.remove("active");
+        shareNotice.style.display = "none";
+        document.getElementById("book-time-slot").textContent = `${activeBookingTarget.time} – ${getNextTimeSlot(activeBookingTarget.time)}`;
+      } else {
+        btn30.classList.remove("active");
+        btn60.classList.add("active");
+
+        const nextTime = getNextTimeSlot(activeBookingTarget.time);
+        const afterNext = getNextTimeSlot(nextTime) || "End";
+        document.getElementById("book-time-slot").textContent = `${activeBookingTarget.time} – ${afterNext}`;
+
+        // Check if second slot already has 1 section booked
+        const allBookings = getStoredBookings();
+        const nextSlotBookings = allBookings.filter(b => b.facilityId === activeBookingTarget.facId && b.date === currentDate && b.time === nextTime);
+
+        if (nextSlotBookings.length === 1 && !nextSlotBookings[0].isBlocked) {
+          const targetSec = nextSlotBookings[0].section;
+          document.getElementById("second-slot-time").textContent = `${nextTime} – ${afterNext}`;
+          document.getElementById("second-slot-section").textContent = targetSec;
+          document.getElementById("second-slot-section-2").textContent = targetSec;
+          shareNotice.style.display = "block";
+        } else {
+          shareNotice.style.display = "none";
+        }
+      }
+    }
+
+    function confirmBooking() {
+      const section = document.getElementById("book-section").value;
+      const poc1Name = document.getElementById("book-poc1-name").value.trim();
+      const poc1Phone = document.getElementById("book-poc1-phone").value.trim();
+      const poc1Email = document.getElementById("book-poc1-email").value.trim();
+      const poc2Name = document.getElementById("book-poc2-name").value.trim();
+      const poc2Phone = document.getElementById("book-poc2-phone").value.trim();
+      const poc2Email = document.getElementById("book-poc2-email").value.trim();
+
+      if (!poc1Name || !poc1Phone || !poc1Email) {
+        alert("Please complete Point of Contact 1 details.");
+        return;
+      }
+
+      const allBookings = getStoredBookings();
+
+      // Concurrency check on Slot 1
+      const slot1Existing = allBookings.filter(b => b.facilityId === activeBookingTarget.facId && b.date === currentDate && b.time === activeBookingTarget.time);
+
+      if (slot1Existing.length >= 2) {
+        alert("This slot was just booked by another user. Please choose another slot.");
+        closeModal("modal-book");
+        renderSheet();
+        return;
+      }
+
+      if (slot1Existing.some(b => b.section === section)) {
+        alert(`Section ${section} has already booked this slot. The same section cannot book twice.`);
+        return;
+      }
+
+      // Generate booking code
+      const code = `IIML-SP-${Math.floor(1000 + Math.random() * 9000)}`;
+
+      // 1. Confirm Slot 1
+      const booking1 = {
+        id: `bk-${Date.now()}-1`,
+        facilityId: activeBookingTarget.facId,
+        date: currentDate,
+        time: activeBookingTarget.time,
+        section,
+        userEmail: currentUser.email,
+        userName: poc1Name,
+        poc1Phone,
+        poc2Name: poc2Name || "N/A",
+        poc2Phone: poc2Phone || "N/A",
+        poc2Email: poc2Email || "N/A",
+        code
+      };
+      allBookings.push(booking1);
+
+      // 2. Handle Duration 60 Min
+      if (selectedDuration === 60) {
+        const nextTime = getNextTimeSlot(activeBookingTarget.time);
+        if (nextTime) {
+          const nextExisting = allBookings.filter(b => b.facilityId === activeBookingTarget.facId && b.date === currentDate && b.time === nextTime);
+
+          if (nextExisting.length === 0) {
+            // Second slot is fully available -> direct confirmation
+            allBookings.push({
+              id: `bk-${Date.now()}-2`,
+              facilityId: activeBookingTarget.facId,
+              date: currentDate,
+              time: nextTime,
+              section,
+              userEmail: currentUser.email,
+              userName: poc1Name,
+              poc1Phone,
+              poc2Name: poc2Name || "N/A",
+              poc2Phone: poc2Phone || "N/A",
+              poc2Email: poc2Email || "N/A",
+              code
+            });
+          } else if (nextExisting.length === 1 && !nextExisting[0].isBlocked) {
+            // Second slot has 1 section -> raise Share Slot Request to that section!
+            const targetBooking = nextExisting[0];
+            const allReqs = getStoredRequests();
+            allReqs.push({
+              id: `req-share-${Date.now()}`,
+              type: "SHARE",
+              facilityId: activeBookingTarget.facId,
+              facilityName: activeBookingTarget.facName,
+              date: currentDate,
+              time: nextTime,
+              requesterSection: section,
+              requesterUserEmail: currentUser.email,
+              targetSection: targetBooking.section,
+              targetUserEmail: targetBooking.userEmail,
+              status: "PENDING"
+            });
+            saveRequests(allReqs);
+          }
+        }
+      }
+
+      saveBookings(allBookings);
+      closeModal("modal-book");
+      renderSheet();
+      checkPendingNotifications();
+
+      // Show confirmation card
+      showSuccessModal(code, activeBookingTarget.facName, currentDate, activeBookingTarget.time, selectedDuration, section, poc1Email);
+    }
+
+    function showSuccessModal(code, facName, date, time, duration, section, email) {
+      document.getElementById("success-code").textContent = code;
+      document.getElementById("success-fac").textContent = facName;
+      document.getElementById("success-date").textContent = date;
+      document.getElementById("success-time").textContent = `${time} (${duration} mins)`;
+      document.getElementById("success-dur").textContent = `${duration} mins`;
+      document.getElementById("success-sec").textContent = `Section ${section}`;
+      document.getElementById("success-email").textContent = email;
+
+      document.getElementById("modal-success").style.display = "flex";
+    }
+
+    // ------------------------------------------
+    // 7. MODAL B: CLICK BOOKED SLOT -> INSPECT / ACTIONS
+    // ------------------------------------------
+    function openDetailsModal(facId, time) {
+      const fac = FACILITIES.find(f => f.id === facId);
+      const allBookings = getStoredBookings();
+      const slots = allBookings.filter(b => b.facilityId === facId && b.date === currentDate && b.time === time);
+
+      if (slots.length === 0) return;
+
+      activeInspectCell = { facId, facName: fac.name, time, date: currentDate, slots };
+      activeInspectTab = 0;
+
+      document.getElementById("details-facility-name").textContent = fac.name;
+      document.getElementById("details-time-slot").textContent = `${time} – ${getNextTimeSlot(time)}`;
+      document.getElementById("details-date-text").textContent = currentDate;
+      document.getElementById("details-capacity-tag").textContent = `${slots.length} of 2 Sections Booked`;
+
+      renderDetailsContent();
+      document.getElementById("modal-details").style.display = "flex";
+    }
+
+    function renderDetailsContent() {
+      const { slots } = activeInspectCell;
+      const tabsContainer = document.getElementById("details-section-tabs");
+      const contentContainer = document.getElementById("details-poc-content");
+      const actionsContainer = document.getElementById("details-actions-container");
+
+      // Tabs
+      if (slots.length > 1) {
+        tabsContainer.style.display = "flex";
+        tabsContainer.innerHTML = slots.map((s, idx) => `
+          <button class="btn ${idx === activeInspectTab ? 'btn-primary' : 'btn-secondary'}" style="padding:4px 12px; font-size:12px;" onclick="switchInspectTab(${idx})">
+            Section ${s.section}
+          </button>
+        `).join("");
+      } else {
+        tabsContainer.style.display = "none";
+      }
+
+      const activeSlot = slots[activeInspectTab] || slots[0];
+
+      // POC Details
+      contentContainer.innerHTML = `
+        <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px; font-size: 13px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+            <span style="font-weight:bold; font-size:15px; color:#107c41;">Section ${activeSlot.section}</span>
+            <span style="font-family:monospace; color:#6b7280;">${activeSlot.code || 'IIML-SP'}</span>
+          </div>
+          <div style="margin-bottom: 8px;">
+            <strong>POC 1:</strong> ${activeSlot.userName}<br>
+            <span style="color:#6b7280;">📞 ${activeSlot.poc1Phone || 'N/A'} | ✉️ ${activeSlot.userEmail}</span>
+          </div>
+          <div>
+            <strong>POC 2:</strong> ${activeSlot.poc2Name || 'N/A'}<br>
+            <span style="color:#6b7280;">📞 ${activeSlot.poc2Phone || 'N/A'} | ✉️ ${activeSlot.poc2Email || 'N/A'}</span>
+          </div>
+        </div>
+      `;
+
+      // Actions
+      let actionsHtml = "";
+      const isMyBooking = currentUser && (activeSlot.section === currentUser.section);
+
+      if (isMyBooking) {
+        // Current user's booking -> option to cancel
+        actionsHtml += `
+          <button class="btn btn-danger" onclick="cancelBooking('${activeSlot.id}')">
+            Cancel Booking
+          </button>
+        `;
+      } else {
+        // Belongs to another section
+        // 1. If only 1 section is booked -> Request to share!
+        if (slots.length === 1) {
+          actionsHtml += `
+            <button class="btn btn-primary" onclick="requestToShareSlot()">
+              Request to Share Slot (Add Section ${currentUser ? currentUser.section : 'H'})
+            </button>
+          `;
+        }
+
+        // 2. Request Swap
+        actionsHtml += `
+          <button class="btn btn-secondary" onclick="openSwapModal()">
+            Request Swap
+          </button>
+        `;
+      }
+
+      actionsContainer.innerHTML = actionsHtml;
+    }
+
+    function switchInspectTab(idx) {
+      activeInspectTab = idx;
+      renderDetailsContent();
+    }
+
+    function cancelBooking(bookingId) {
+      if (confirm("Are you sure you want to cancel this booking?")) {
+        const allBookings = getStoredBookings().filter(b => b.id !== bookingId);
+        saveBookings(allBookings);
+        closeModal("modal-details");
+        renderSheet();
+      }
+    }
+
+    // ------------------------------------------
+    // 8. REQUEST TO SHARE SLOT FLOW
+    // ------------------------------------------
+    function requestToShareSlot() {
+      if (!currentUser) return;
+      const { facId, facName, time, slots } = activeInspectCell;
+      const targetSlot = slots[0];
+
+      if (targetSlot.section === currentUser.section) {
+        alert("Your section has already booked this slot.");
+        return;
+      }
+
+      const allReqs = getStoredRequests();
+      allReqs.push({
+        id: `req-share-${Date.now()}`,
+        type: "SHARE",
+        facilityId: facId,
+        facilityName: facName,
+        date: currentDate,
+        time,
+        requesterSection: currentUser.section,
+        requesterUserEmail: currentUser.email,
+        requesterUserName: currentUser.name,
+        targetSection: targetSlot.section,
+        targetUserEmail: targetSlot.userEmail,
+        status: "PENDING"
+      });
+      saveRequests(allReqs);
+
+      alert(`Slot Sharing Request sent to Section ${targetSlot.section}. Once accepted, Section ${currentUser.section} will be confirmed.`);
+      closeModal("modal-details");
+      checkPendingNotifications();
+    }
+
+    // ------------------------------------------
+    // 9. ATOMIC SWAP FLOW
+    // ------------------------------------------
+    function openSwapModal() {
+      if (!currentUser) return;
+      const { facName, time, slots } = activeInspectCell;
+      const targetSlot = slots[activeInspectTab] || slots[0];
+
+      activeSwapTarget = targetSlot;
+
+      document.getElementById("swap-target-section").textContent = targetSlot.section;
+      document.getElementById("swap-target-summary").textContent = `${facName} at ${time} (${currentDate})`;
+
+      // Find all bookings belonging to the current user to offer in return
+      const allBookings = getStoredBookings();
+      const myBookings = allBookings.filter(b => b.section === currentUser.section && !b.isBlocked);
+
+      const select = document.getElementById("swap-my-booking-select");
+      if (myBookings.length === 0) {
+        alert("You must have at least one existing confirmed booking to propose a swap.");
+        return;
+      }
+
+      select.innerHTML = myBookings.map(b => {
+        const fac = FACILITIES.find(f => f.id === b.facilityId);
+        return `<option value="${b.id}">${fac ? fac.name : 'Facility'} on ${b.date} at ${b.time}</option>`;
+      }).join("");
+
+      closeModal("modal-details");
+      document.getElementById("modal-swap").style.display = "flex";
+    }
+
+    function submitSwapRequest() {
+      const offeredBookingId = document.getElementById("swap-my-booking-select").value;
+      const allBookings = getStoredBookings();
+      const offeredBooking = allBookings.find(b => b.id === offeredBookingId);
+
+      if (!offeredBooking) {
+        alert("Please select a booking to offer.");
+        return;
+      }
+
+      const allReqs = getStoredRequests();
+      allReqs.push({
+        id: `req-swap-${Date.now()}`,
+        type: "SWAP",
+        requesterSection: currentUser.section,
+        requesterBookingId: offeredBooking.id,
+        requesterEmail: currentUser.email,
+        targetSection: activeSwapTarget.section,
+        targetBookingId: activeSwapTarget.id,
+        targetEmail: activeSwapTarget.userEmail,
+        status: "PENDING"
+      });
+      saveRequests(allReqs);
+
+      alert(`Swap request sent to Section ${activeSwapTarget.section}. Both bookings will be exchanged atomically upon their acceptance.`);
+      closeModal("modal-swap");
+      checkPendingNotifications();
+    }
+
+    // ------------------------------------------
+    // 10. NOTIFICATION BANNER ENGINE
+    // ------------------------------------------
+    let currentPendingRequest = null;
+
+    function checkPendingNotifications() {
+      const banner = document.getElementById("notification-banner-container");
+      if (!currentUser) {
+        banner.style.display = "none";
+        return;
+      }
+
+      const allReqs = getStoredRequests();
+      // Find request targeted at the current logged in user/section
+      const pending = allReqs.find(r => r.status === "PENDING" && (r.targetSection === currentUser.section || r.targetEmail === currentUser.email));
+
+      if (pending) {
+        currentPendingRequest = pending;
+        banner.style.display = "block";
+        const msgText = document.getElementById("banner-message-text");
+
+        if (pending.type === "SWAP") {
+          msgText.innerHTML = `Section <strong>${pending.requesterSection}</strong> wants to swap a slot with your booking.`;
+        } else {
+          msgText.innerHTML = `Section <strong>${pending.requesterSection}</strong> has requested to share <strong>${pending.facilityName || 'Facility'}</strong> at ${pending.time}.`;
+        }
+      } else {
+        banner.style.display = "none";
+        currentPendingRequest = null;
+      }
+    }
+
+    function respondToPendingRequest(isAccepted) {
+      if (!currentPendingRequest) return;
+
+      const allReqs = getStoredRequests();
+      const reqIndex = allReqs.findIndex(r => r.id === currentPendingRequest.id);
+
+      if (reqIndex === -1) return;
+
+      if (!isAccepted) {
+        allReqs[reqIndex].status = "REJECTED";
+        saveRequests(allReqs);
+        alert("Request declined.");
+        checkPendingNotifications();
+        return;
+      }
+
+      // ACCEPT REQUEST
+      const req = allReqs[reqIndex];
+      const allBookings = getStoredBookings();
+
+      if (req.type === "SWAP") {
+        // ATOMIC SWAP TRANSACTION
+        const b1 = allBookings.find(b => b.id === req.requesterBookingId);
+        const b2 = allBookings.find(b => b.id === req.targetBookingId);
+
+        if (!b1 || !b2) {
+          alert("This swap is no longer available because one of the bookings was modified or cancelled.");
+          allReqs[reqIndex].status = "CANCELLED";
+          saveRequests(allReqs);
+          checkPendingNotifications();
+          return;
+        }
+
+        // Swap sections & owner emails atomically
+        const tempSec = b1.section;
+        const tempEmail = b1.userEmail;
+        const tempName = b1.userName;
+
+        b1.section = b2.section;
+        b1.userEmail = b2.userEmail;
+        b1.userName = b2.userName;
+
+        b2.section = tempSec;
+        b2.userEmail = tempEmail;
+        b2.userName = tempName;
+
+        allReqs[reqIndex].status = "ACCEPTED";
+        saveBookings(allBookings);
+        saveRequests(allReqs);
+        alert("Swap completed successfully in one atomic operation!");
+
+      } else if (req.type === "SHARE") {
+        // CONFIRM SHARED SLOT
+        const existingInSlot = allBookings.filter(b => b.facilityId === req.facilityId && b.date === req.date && b.time === req.time);
+
+        if (existingInSlot.length >= 2) {
+          alert("This slot already has 2 sections and cannot accept another.");
+          allReqs[reqIndex].status = "CANCELLED";
+          saveRequests(allReqs);
+          checkPendingNotifications();
+          return;
+        }
+
+        allBookings.push({
+          id: `bk-${Date.now()}-shared`,
+          facilityId: req.facilityId,
+          date: req.date,
+          time: req.time,
+          section: req.requesterSection,
+          userEmail: req.requesterUserEmail,
+          userName: req.requesterUserName || `Section ${req.requesterSection} POC`,
+          poc1Phone: "+91 98765 43210",
+          poc2Name: "N/A",
+          poc2Phone: "N/A",
+          poc2Email: "N/A",
+          code: `IIML-SP-${Math.floor(1000 + Math.random() * 9000)}`
+        });
+
+        allReqs[reqIndex].status = "ACCEPTED";
+        saveBookings(allBookings);
+        saveRequests(allReqs);
+        alert(`Shared slot confirmed! Section ${req.requesterSection} added to the slot.`);
+      }
+
+      renderSheet();
+      checkPendingNotifications();
+    }
+
+    // ------------------------------------------
+    // 11. GENERAL HELPERS
+    // ------------------------------------------
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = "none";
+    }
+
+    // Close modal on escape key
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        document.querySelectorAll(".modal-overlay").forEach(m => m.style.display = "none");
+      }
+    });
+
+    // Initialize application
+    window.onload = function() {
+      updateDateUI();
+      checkExistingSession();
+    };
+  </script>
+</body>
+</html>
